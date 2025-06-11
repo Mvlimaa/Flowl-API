@@ -11,6 +11,7 @@ class UsuarioBase(BaseModel):
     nome: str
     cpf: str
     telefone: str
+    categoria: str = "garcom"
 
 class UsuarioCreate(UsuarioBase):
     senha: str
@@ -23,7 +24,7 @@ class UsuarioOut(UsuarioBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Mesas 
 class MesaBase(BaseModel):
@@ -45,16 +46,17 @@ class Mesa(MesaBase):
 
 # Garçons 
 class GarcomBase(BaseModel):
-    nome: str
+    usuario_id: int
 
 class GarcomCreate(GarcomBase):
     pass
 
 class Garcom(GarcomBase):
     id: int
+    usuario_nome: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Produtos 
 class CategoriaCardapio(str, Enum):

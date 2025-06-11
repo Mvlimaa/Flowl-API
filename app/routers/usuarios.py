@@ -14,7 +14,6 @@ def criar_usuario(usuario: schemas.UsuarioCreate, db: Session = Depends(get_db))
 
 @router.get("/", response_model=list[schemas.UsuarioOut])
 def listar_usuarios(db: Session = Depends(get_db)):
-    # Exemplo simples, ajuste conforme necessidade
     return db.query(crud.models.Usuario).all()
 
 @router.post("/login")

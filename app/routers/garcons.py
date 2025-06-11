@@ -5,23 +5,24 @@ from app.database import get_db
 
 router = APIRouter()
 
-@router.post("/", response_model=schemas.Garcom)
-def criar_garcom(garcom: schemas.GarcomCreate, db: Session = Depends(get_db)):
-    db_garcom = models.Garcom(nome=garcom.nome)
-    db.add(db_garcom)
-    db.commit()
-    db.refresh(db_garcom)
-    return db_garcom
-
-@router.get("/", response_model=list[schemas.Garcom])
+@router.get("/", response_model=list[dict])
 def listar_garcons(db: Session = Depends(get_db)):
-    return db.query(models.Garcom).all()
+    usuarios = db.query(models.Usuario).filter(models.Usuario.categoria == "garcom").all()
+    result = []
+    for usuario in usuarios:
+        garcom = db.query(models.Garcom).filter(models.Garcom.usuario_id == usuario.id).first()
+        if garcom:
+            id_garcom = garcom.id
+        else:
+            novo_garcom = models.Garcom(usuario_id=usuario.id)
+            db.add(novo_garcom)
+            db.commit()
+            db.refresh(novo_garcom)
+            id_garcom = novo_garcom.id
+        result.append({
+            "id_garcom": id_garcom,
+            "id_usuario": usuario.id,
+            "nome_usuario": usuario.nome
+        })
+    return result
 
-@router.delete("/{garcom_id}", status_code=204)
-def deletar_garcom(garcom_id: int, db: Session = Depends(get_db)):
-    garcom = db.query(models.Garcom).filter(models.Garcom.id == garcom_id).first()
-    if not garcom:
-        raise HTTPException(status_code=404, detail="Garçom não encontrado")
-    db.delete(garcom)
-    db.commit()
-    return None

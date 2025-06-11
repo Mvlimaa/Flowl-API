@@ -13,6 +13,7 @@ class Usuario(Base):
     cpf = Column(String, unique=True, nullable=False)
     senha = Column(String, nullable=False)
     telefone = Column(String)
+    categoria = Column(String, nullable=False, default="garcom")
 
 class Mesa(Base):
     __tablename__ = "mesas"
@@ -26,8 +27,9 @@ class Mesa(Base):
 class Garcom(Base):
     __tablename__ = "garcons"
     id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, nullable=False)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
 
+    usuario = relationship("Usuario")
     pedidos = relationship("Pedido", back_populates="garcom")
 
 class CategoriaEnum(str, enum.Enum):
