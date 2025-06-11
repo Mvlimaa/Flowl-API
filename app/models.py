@@ -3,12 +3,25 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 import enum
 
+# Criação Data Base
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    cpf = Column(String, unique=True, nullable=False)
+    senha = Column(String, nullable=False)
+    telefone = Column(String)
+
 class Mesa(Base):
     __tablename__ = "mesas"
     id = Column(Integer, primary_key=True, index=True)
     numero = Column(Integer, unique=True, nullable=False)
+    status = Column(String, default="fechada", nullable=False)
 
     pedidos = relationship("Pedido", back_populates="mesa")
+
 
 class Garcom(Base):
     __tablename__ = "garcons"
@@ -18,10 +31,10 @@ class Garcom(Base):
     pedidos = relationship("Pedido", back_populates="garcom")
 
 class CategoriaEnum(str, enum.Enum):
-    hamburguer = "Hamburguer"
-    batata = "Batata"
-    bebida = "Bebida"
-    sobremesa = "Sobremesa"
+    hamburguer = "hamburguer"
+    batata = "batata"
+    bebida = "bebida"
+    sobremesa = "sobremesa"
 
 class Produto(Base):
     __tablename__ = "produtos"
